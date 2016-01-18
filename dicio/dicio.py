@@ -18,6 +18,9 @@ class Word(object):
         self.url = BASE_URL.format(word)
         self.meaning = meaning
 
+    def __repr__(self):
+        return self.word
+
 class Dicio(object):
     """
     Dicio API com significado.
@@ -46,12 +49,12 @@ class Dicio(object):
         """
         Retorna o significado encontrado.
         """
-        return remove_tags(text_between(page, TAG_MEANING[0], TAG_MEANING[1], True))
+        return remove_spaces(remove_tags(text_between(page, TAG_MEANING[0], TAG_MEANING[1], True)))
 
 
 if __name__ == "__main__":
-    word = Dicio().search("Carambola")
+    word = Dicio().search("curupira")
     if word:
-        print(word.word, word.url, "\n\t", word.meaning)
+        print(word, word.url, "\n\t", word.meaning)
     else:
         print("Não encontrado.")

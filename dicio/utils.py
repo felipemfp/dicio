@@ -6,7 +6,7 @@ def remove_tags(str):
     'Something'
     """
     import re
-    return re.sub('<[^>]*>', '', str)
+    return re.sub('<[^>]*>', ' ', str).strip()
 
 def text_between(str, before, after, forceHTML = False):
     """
@@ -25,7 +25,19 @@ def text_between(str, before, after, forceHTML = False):
             end = str.find("<", start)
     if -1 < start < end:
         return str[start:end]
-    return str
+    return str.strip()
+
+def remove_spaces(str):
+    """
+    Retorna uma nova string com todos os espaços duplos, tabulações
+    e quebras de linha removidos
+    """
+    str = str.replace("\t", " ")
+    str = str.replace("\n", " ")
+    str = str.replace("\r", " ")
+    while str.find("  ") > -1:
+        str = str.replace("  ", " ")
+    return str.strip()
 
 def remove_accents(str):
     """
