@@ -1,6 +1,6 @@
 Python API para [Dicio.com.br](http://www.dicio.com.br/)
 
-| Build Status | Test Coverage |
+| Situação de Build | Cobertura de Testes |
 | ------------ | ------------- | 
 | [![Build Status](https://travis-ci.org/felipemfp/dicio.svg?branch=master)](https://travis-ci.org/felipemfp/dicio) | [![Coverage Status](https://coveralls.io/repos/github/felipemfp/dicio/badge.svg?branch=master)](https://coveralls.io/github/felipemfp/dicio?branch=master) |
 
