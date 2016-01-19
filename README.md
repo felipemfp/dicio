@@ -1,5 +1,7 @@
 Python API para [Dicio.com.br](http://www.dicio.com.br/)
 
+[![Coverage Status](https://coveralls.io/repos/github/felipemfp/dicio/badge.svg?branch=master)](https://coveralls.io/github/felipemfp/dicio?branch=master)
+
 ## Uso
 
 ```python
