@@ -6,11 +6,22 @@ Python API para [Dicio.com.br](http://www.dicio.com.br/)
 # Instancia o objeto Dicio
 dicio = Dicio()
 
-# Pesquisa por "Carambola" e retorna um objeto Word
-word = Dicio().search("Carambola")
+# Pesquisa por "Doce" e retorna um objeto Word
+word = dicio.search("Doce")
 
 # Apresenta a palavra, a URL e o significado
-print(word.word, word.url, word.meaning)
+print(word, word.url, word.meaning)
+
+# Apresenta a lista de sinônimos
+print(word.synonyms)
+
+# Apresenta as informações adicionais
+for chave, valor in word.extra.items(): 
+    print(chave, "=>", valor)
+
+# Apresenta a palavra, a URL e o significado do primeiro sinônimo
+word.synonyms[0].load()
+print(word.synonyms[0], word.synonyms[0].url, word.synonyms[0].meaning)
 ```
 
 ## Detalhes das Palavras
@@ -18,6 +29,13 @@ print(word.word, word.url, word.meaning)
 - **word** - a própria palavra
 - **url** - o endereço Dicio.com.br da palavra
 - **meaning** - o significado da palavra
+
+### Propriedades
+- **synonyms** - a lista de sinônimos
+- **extra** - o dicionário de informações adicionais
+
+### Funções
+- **load** - ler informações do Dicio.com.br
 
 ## Colaborar
 Se quiser adicionar novas funções ou melhorar alguma, sinta-se livre e envie uma Pull Request!
