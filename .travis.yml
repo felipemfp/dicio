@@ -4,6 +4,6 @@ python:
 install:
   - pip install coveralls
 script:
-  coverage run --source=dicio
+  coverage run dicio/dicio.py
 after_success:
   coveralls
