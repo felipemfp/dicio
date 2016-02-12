@@ -1,3 +1,5 @@
+# coding=utf-8
+
 def remove_tags(str):
     """
     Retorna uma nova string sem as marcacoes do HTML

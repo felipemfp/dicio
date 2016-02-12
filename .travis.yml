@@ -1,9 +1,10 @@
 language: python
 python:
-  - 3.5
+  - 3.4
 install:
+  - python setup.py install
   - pip install coveralls
 script:
-  coverage run dicio/dicio.py
+  coverage run --source=dicio setup.py test
 after_success:
   coveralls

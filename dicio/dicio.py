@@ -1,5 +1,6 @@
 """
 Python API não oficial para Dicio.com.br
+
 @autor Felipe Pontes
 @email felipemfpontes@gmail.com
 """

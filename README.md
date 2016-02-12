@@ -1,7 +1,7 @@
 Python API para [Dicio.com.br](http://www.dicio.com.br/)
 
 | Situação de Build | Cobertura de Testes |
-| ------------ | ------------- | 
+| ------------ | ------------- |
 | [![Build Status](https://travis-ci.org/felipemfp/dicio.svg?branch=master)](https://travis-ci.org/felipemfp/dicio) | [![Coverage Status](https://coveralls.io/repos/github/felipemfp/dicio/badge.svg?branch=master)](https://coveralls.io/github/felipemfp/dicio?branch=master) |
 
 ## Uso
@@ -20,7 +20,7 @@ print(word, word.url, word.meaning)
 print(word.synonyms)
 
 # Apresenta as informações adicionais
-for chave, valor in word.extra.items(): 
+for chave, valor in word.extra.items():
     print(chave, "=>", valor)
 
 # Apresenta a palavra, a URL e o significado do primeiro sinônimo
