@@ -2,7 +2,7 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>Dicio - Felipe Pontes</title>
+    <title>Dicio by felipemfp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -12,90 +12,91 @@
   <body>
     <section class="page-header">
       <h1 class="project-name">Dicio</h1>
-      <h2 class="project-tagline">Uma Python API para Dicio.com.br</h2>
+      <h2 class="project-tagline">A Python API for Dicio.com.br</h2>
       <a href="https://github.com/felipemfp/dicio" class="btn">View on GitHub</a>
       <a href="https://github.com/felipemfp/dicio/zipball/master" class="btn">Download .zip</a>
       <a href="https://github.com/felipemfp/dicio/tarball/master" class="btn">Download .tar.gz</a>
     </section>
 
     <section class="main-content">
-      <p>Python API para <a href="http://www.dicio.com.br/">Dicio.com.br</a></p>
+      <p>Python API for <a href="http://www.dicio.com.br/">Dicio.com.br</a></p>
 
 <table>
 <thead>
 <tr>
-<th>Situação de Build</th>
-<th>Cobertura de Testes</th>
+<th>Build Status</th>
+<th>Test Coverage</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><a href="https://travis-ci.org/felipemfp/dicio"><img src="https://travis-ci.org/felipemfp/dicio.svg?branch=master"></a></td>
+<td><a href="https://travis-ci.org/felipemfp/dicio"><img src="https://travis-ci.org/felipemfp/dicio.svg?branch=master" alt="Build Status"></a></td>
 <td><a href="https://coveralls.io/github/felipemfp/dicio?branch=master"><img src="https://coveralls.io/repos/github/felipemfp/dicio/badge.svg?branch=master" alt="Coverage Status"></a></td>
 </tr>
 </tbody>
 </table>
 
 <h2>
-<a id="uso" class="anchor" href="#uso" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Uso</h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
 
-<div class="highlight highlight-source-python"><pre><span class="pl-c"># Instancia o objeto Dicio</span>
+<div class="highlight highlight-source-python"><pre><span class="pl-c"># Create a Dicio object</span>
 dicio <span class="pl-k">=</span> Dicio()
 
-<span class="pl-c"># Pesquisa por "Doce" e retorna um objeto Word</span>
+<span class="pl-c"># Search for "Doce" and return an object Word</span>
 word <span class="pl-k">=</span> dicio.search(<span class="pl-s"><span class="pl-pds">"</span>Doce<span class="pl-pds">"</span></span>)
 
-<span class="pl-c"># Apresenta a palavra, a URL e o significado</span>
+<span class="pl-c"># Print the word, the url and the meaning</span>
 <span class="pl-c1">print</span>(word, word.url, word.meaning)
 
-<span class="pl-c"># Apresenta a lista de sinônimos</span>
+<span class="pl-c"># Print a list of synonyms</span>
 <span class="pl-c1">print</span>(word.synonyms)
 
-<span class="pl-c"># Apresenta as informações adicionais</span>
-<span class="pl-k">for</span> chave, valor <span class="pl-k">in</span> word.extra.items(): 
+<span class="pl-c"># Print extra informations</span>
+<span class="pl-k">for</span> chave, valor <span class="pl-k">in</span> word.extra.items():
     <span class="pl-c1">print</span>(chave, <span class="pl-s"><span class="pl-pds">"</span>=&gt;<span class="pl-pds">"</span></span>, valor)
 
-<span class="pl-c"># Apresenta a palavra, a URL e o significado do primeiro sinônimo</span>
+<span class="pl-c"># Load information about the first synonym</span>
+<span class="pl-c"># Print the word, the URL and the meaning of the first synonym</span>
 word.synonyms[<span class="pl-c1">0</span>].load()
 <span class="pl-c1">print</span>(word.synonyms[<span class="pl-c1">0</span>], word.synonyms[<span class="pl-c1">0</span>].url, word.synonyms[<span class="pl-c1">0</span>].meaning)</pre></div>
 
 <h2>
-<a id="detalhes-das-palavras" class="anchor" href="#detalhes-das-palavras" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Detalhes das Palavras</h2>
+<a id="word-details" class="anchor" href="#word-details" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Word details</h2>
 
 <h3>
-<a id="atributos" class="anchor" href="#atributos" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Atributos</h3>
+<a id="attributes" class="anchor" href="#attributes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Attributes</h3>
 
 <ul>
 <li>
-<strong>word</strong> - a própria palavra</li>
+<strong>word</strong> - the word itself</li>
 <li>
-<strong>url</strong> - o endereço Dicio.com.br da palavra</li>
+<strong>url</strong> - Dicio.com.br url for the word</li>
 <li>
-<strong>meaning</strong> - o significado da palavra</li>
+<strong>meaning</strong> - the meaning</li>
 </ul>
 
 <h3>
-<a id="propriedades" class="anchor" href="#propriedades" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Propriedades</h3>
+<a id="properties" class="anchor" href="#properties" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Properties</h3>
 
 <ul>
 <li>
-<strong>synonyms</strong> - a lista de sinônimos</li>
+<strong>synonyms</strong> - list of synonyms</li>
 <li>
-<strong>extra</strong> - o dicionário de informações adicionais</li>
+<strong>extra</strong> - dictionary of extra information (keys in portuguese)</li>
 </ul>
 
 <h3>
-<a id="funções" class="anchor" href="#fun%C3%A7%C3%B5es" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Funções</h3>
+<a id="functions" class="anchor" href="#functions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Functions</h3>
 
 <ul>
 <li>
-<strong>load</strong> - ler informações do Dicio.com.br</li>
+<strong>load</strong> - load information from Dicio.com.br</li>
 </ul>
 
 <h2>
-<a id="colaborar" class="anchor" href="#colaborar" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Colaborar</h2>
+<a id="contribute" class="anchor" href="#contribute" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contribute</h2>
 
-<p>Se quiser adicionar novas funções ou melhorar alguma, sinta-se livre e envie uma Pull Request!</p>
+<p>If you want to add new features or improve something, send a pull request!</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/felipemfp/dicio">Dicio</a> is maintained by <a href="https://github.com/felipemfp">felipemfp</a>.</span>
