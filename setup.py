@@ -14,5 +14,14 @@ setup(
     license='MIT License',
     description='Unofficial Python API for Dicio.',
     long_description='Unofficial Python API for Dicio. \
-        Usage: https://github.com/felipemfp/dicio.'
+        Usage: https://github.com/felipemfp/dicio.',
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3 :: Only',
+        'Topic :: Internet :: WWW/HTTP :: Browsers',
+        'Topic :: Internet :: WWW/HTTP :: Indexing/Search',
+        'Topic :: Utilities',
+    ],
 )
