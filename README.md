@@ -7,6 +7,8 @@ Python API for [Dicio.com.br](http://www.dicio.com.br/)
 ## Usage
 
 ```python
+from dicio import Dicio
+
 # Create a Dicio object
 dicio = Dicio()
 
