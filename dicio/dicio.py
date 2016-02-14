@@ -1,28 +1,31 @@
-"""
-Python API não oficial para Dicio.com.br
+# coding: utf-8
 
-@autor Felipe Pontes
+"""
+Unofficial Python API for Dicio.com.br
+
+@author Felipe Pontes
 @email felipemfpontes@gmail.com
 """
 
 import html
 from urllib import request
-from utils import *
+from dicio.utils import Utils
 
-BASE_URL = "http://www.dicio.com.br/{}"
-CHARSET = "iso-8859-1"
-TAG_MEANING = ("id=\"significado\"", "</p>")
-TAG_SYNONYMS = ("class=\"adicional sinonimos\"", "</p>")
-TAG_SYNONYMS_DELIMITER = ("<a", "</a>")
-TAG_ENCHANT = ("id=\"enchant\"", "</div>")
-TAG_EXTRA = ("class=\"adicional\"", "</p>")
-TAG_EXTRA_SEP = "br"
-TAG_EXTRA_DELIMITER = ("<b>", "</b>")
+BASE_URL = 'http://www.dicio.com.br/{}'
+CHARSET = 'iso-8859-1'
+TAG_MEANING = ('id="significado"', '</p>')
+TAG_SYNONYMS = ('class="adicional sinonimos"', '</p>')
+TAG_SYNONYMS_DELIMITER = ('<a', '</a>')
+TAG_ENCHANT = ('id="enchant"', '</div>')
+TAG_EXTRA = ('class="adicional"', '</p>')
+TAG_EXTRA_SEP = 'br'
+TAG_EXTRA_DELIMITER = ('<b>', '</b>')
+
 
 class Word(object):
-    def __init__(self, word, meaning = None, synonyms = [], extra = {}):
-        self.word = word
-        self.url = BASE_URL.format(remove_accents(word).strip().lower())
+    def __init__(self, word, meaning=None, synonyms=[], extra={}):
+        self.word = word.strip().lower()
+        self.url = BASE_URL.format(Utils.remove_accents(word).strip().lower())
         self.meaning = meaning
         self.synonyms = synonyms
         self.extra = extra
@@ -36,19 +39,24 @@ class Word(object):
         self.synonyms = found.synonyms
         self.extra = found.extra
 
+
 class Dicio(object):
     """
-    Dicio API com significado, sinônimos e adicionais.
+    Dicio API with meaning, synonyms and extra information.
     """
+
     def search(self, word):
         """
-        Procura pela palavra.
+        Search for word.
         """
         if len(word.split()) > 1:
             return None
 
-        _word = remove_accents(word).strip().lower()
-        url = request.urlopen(BASE_URL.format(_word))
+        _word = Utils.remove_accents(word).strip().lower()
+        try:
+            url = request.urlopen(BASE_URL.format(_word))
+        except:
+            return None
         page = html.unescape(url.read().decode(CHARSET))
 
         if page.find(TAG_ENCHANT[0]) > -1:
@@ -61,53 +69,55 @@ class Dicio(object):
 
         return found
 
-
     def meaning(self, page):
         """
-        Retorna o significado encontrado.
+        Return meaning.
         """
-        return remove_spaces(remove_tags(text_between(page, TAG_MEANING[0], TAG_MEANING[1], True)))
+        return Utils.remove_spaces(Utils.remove_tags(Utils.text_between(page, TAG_MEANING[0], TAG_MEANING[1], True)))
 
     def synonyms(self, page):
         """
-        Retorna os sinônimos encontrados.
+        Return list of synonyms.
         """
         synonyms = []
         if page.find(TAG_SYNONYMS[0]) > -1:
-            synonyms_html = text_between(page, TAG_SYNONYMS[0], TAG_SYNONYMS[1], True)
+            synonyms_html = Utils.text_between(page, TAG_SYNONYMS[0], TAG_SYNONYMS[1], True)
             while synonyms_html.find(TAG_SYNONYMS_DELIMITER[0]) > -1:
-                synonym = text_between(synonyms_html, TAG_SYNONYMS_DELIMITER[0], TAG_SYNONYMS_DELIMITER[1], True)
-                synonyms.append(Word(remove_spaces(synonym)))
+                synonym = Utils.text_between(synonyms_html, TAG_SYNONYMS_DELIMITER[0], TAG_SYNONYMS_DELIMITER[1], True)
+                synonyms.append(Word(Utils.remove_spaces(synonym)))
                 synonyms_html = synonyms_html.replace(TAG_SYNONYMS_DELIMITER[0], "", 1)
                 synonyms_html = synonyms_html.replace(TAG_SYNONYMS_DELIMITER[1], "", 1)
         return synonyms
 
-
     def extra(self, page):
         """
-        Retorna os adicionais encontrados.
+        Return a dictionary of extra information.
         """
         dic_extra = {}
-        if page.find(TAG_EXTRA[0]) > -1:
-            extra_html = text_between(page, TAG_EXTRA[0], TAG_EXTRA[1], True)
-            extra_rows = split_html_tag(remove_spaces(extra_html), TAG_EXTRA_SEP)
-            for row in extra_rows:
-                _row = remove_tags(row)
-                key, value = _row.split(":")
-                dic_extra[remove_spaces(key)] = remove_spaces(value)
+        try:
+            if page.find(TAG_EXTRA[0]) > -1:
+                extra_html = Utils.text_between(page, TAG_EXTRA[0], TAG_EXTRA[1], True)
+                extra_rows = Utils.split_html_tag(Utils.remove_spaces(extra_html), TAG_EXTRA_SEP)
+                for row in extra_rows:
+                    _row = Utils.remove_tags(row)
+                    key, value = _row.split(":")
+                    dic_extra[Utils.remove_spaces(key)] = Utils.remove_spaces(value)
+        except:
+            pass
         return dic_extra
 
 
-if __name__ == "__main__":
-    word = Dicio().search("Doce")
+if __name__ == '__main__':
+    search = input('What? ');
+    word = Dicio().search(search)
     if word:
         print(word, word.url, "\n\t", word.meaning)
-        print("Sinônimos")
+        print('# Synonyms')
         for item in word.synonyms:
             item.load()
-            print("\t", item, item.url, item.meaning)
-        print("Extras")
+            print("\t", item, item.url, '{}...'.format(item.meaning[0:25].strip()))
+        print('# Extras')
         for key, value in word.extra.items():
-            print("\t", key, "=>", value)
+            print('\t', key, '=>', value)
     else:
-        print("Não encontrado.")
+        print('404 Not Found.')

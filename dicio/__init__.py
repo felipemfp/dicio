@@ -6,4 +6,5 @@ Python API não oficial para Dicio.com.br
 """
 from dicio.dicio import Dicio
 from dicio.dicio import Word
-import utils
+from dicio.utils import Utils
+
