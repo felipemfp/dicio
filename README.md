@@ -4,6 +4,11 @@ Python API for [Dicio.com.br](http://www.dicio.com.br/)
 | ------------ | ------------- |
 | [![Build Status](https://travis-ci.org/felipemfp/dicio.svg?branch=master)](https://travis-ci.org/felipemfp/dicio) | [![Coverage Status](https://coveralls.io/repos/github/felipemfp/dicio/badge.svg?branch=master)](https://coveralls.io/github/felipemfp/dicio?branch=master) |
 
+## Installation
+```sh
+$ pip install Dicio
+```
+
 ## Usage
 
 ```python
