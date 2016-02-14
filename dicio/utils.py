@@ -4,7 +4,7 @@ class Utils(object):
     @staticmethod
     def remove_tags(str):
         """
-        Retorna uma nova string sem as marcacoes do HTML
+        Return a new string without html tags.
 
         >>> remove_tags("<a href='#'>Something</a>")
         'Something'
@@ -15,7 +15,7 @@ class Utils(object):
     @staticmethod
     def text_before(str, after):
         """
-        Retorna o texto antes da string after
+        Return text before after.
 
         >>> text_before("<a href='#'>Something</a>", "</a>")
         "<a href='#'>Something"
@@ -28,7 +28,7 @@ class Utils(object):
     @staticmethod
     def text_after(str, before):
         """
-        Retorna o texto depois da string before
+        Return text after before.
 
         >>> text_after("<a href='#'>Something</a>", "<a href='#'>")
         'Something</a>'
@@ -42,7 +42,8 @@ class Utils(object):
     @staticmethod
     def text_between(str, before, after, force_html = False):
         """
-        Retorna o texto entre as string before e after
+        Return text between before and after.
+        Use force_html when before and after were html tags.
 
         >>> text_between("<a href='#'>Something</a>", "<a href='#'>", "</a>")
         'Something'
@@ -64,8 +65,7 @@ class Utils(object):
     @staticmethod
     def remove_spaces(str):
         """
-        Retorna uma nova string com todos os espaços duplos, tabulações
-        e quebras de linha removidos
+        Return a new string without double space, tabs, carriage return or line feed.
 
         >>> remove_spaces("Something  else")
         'Something else'
@@ -80,7 +80,7 @@ class Utils(object):
     @staticmethod
     def remove_accents(str):
         """
-        Retorna uma nova string sem os acentos da lingua portuguesa
+        Return a new string without accents from portuguese
 
         >>> remove_accents("trava-língua")
         'trava-lingua'
@@ -118,7 +118,7 @@ class Utils(object):
     @staticmethod
     def split_html_tag(str, tag):
         """
-        Retorna split para determinada tag html dentro dos formatos possíveis
+        Return a list like split, but it uses html tags in various formats.
 
         >>> str = "Something<br>else<br />and<br/>another<br></br>thing"
         >>> split_html_tag(str, "br")
@@ -137,7 +137,3 @@ class Utils(object):
         for template in templates:
             new_str = new_str.replace(template.format(tag), TEMPLATE.format(tag))
         return list(filter(None, new_str.split(TEMPLATE.format(tag))))
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()

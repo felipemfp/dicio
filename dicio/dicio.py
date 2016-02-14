@@ -105,19 +105,3 @@ class Dicio(object):
         except:
             pass
         return dic_extra
-
-
-if __name__ == '__main__':
-    search = input('What? ');
-    word = Dicio().search(search)
-    if word:
-        print(word, word.url, "\n\t", word.meaning)
-        print('# Synonyms')
-        for item in word.synonyms:
-            item.load()
-            print("\t", item, item.url, '{}...'.format(item.meaning[0:25].strip()))
-        print('# Extras')
-        for key, value in word.extra.items():
-            print('\t', key, '=>', value)
-    else:
-        print('404 Not Found.')
