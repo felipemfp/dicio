@@ -1,8 +1,11 @@
+# dicio 
+
+[![Build Status](https://travis-ci.org/felipemfp/dicio.svg?branch=master)](https://travis-ci.org/felipemfp/dicio) [![Coverage Status](https://coveralls.io/repos/github/felipemfp/dicio/badge.svg?branch=master)](https://coveralls.io/github/felipemfp/dicio?branch=master)
+
 Python API for [Dicio.com.br](http://www.dicio.com.br/)
 
-| Build Status | Test Coverage |
-| ------------ | ------------- |
-| [![Build Status](https://travis-ci.org/felipemfp/dicio.svg?branch=master)](https://travis-ci.org/felipemfp/dicio) | [![Coverage Status](https://coveralls.io/repos/github/felipemfp/dicio/badge.svg?branch=master)](https://coveralls.io/github/felipemfp/dicio?branch=master) |
+![](https://67.media.tumblr.com/ed4ca12184eebd88bd57d42a12ff1729/tumblr_o7j7jpyDDX1vnlnoto1_1280.gif)
+
 
 ## Installation
 ```sh
