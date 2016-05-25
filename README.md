@@ -1,9 +1,4 @@
-<p align="center">
-    <img src="https://66.media.tumblr.com/25b7e1192ace84e597a77130a6fc5d93/tumblr_o7osjb0JpM1vnlnoto1_400.png" />
-</p>
-
-
-# dicio 
+# ![dicio](https://66.media.tumblr.com/ea845a051d316c335f21f084b0ca21b9/tumblr_o7osjb0JpM1vnlnoto1_r1_1280.png)
 
 [![Build Status](https://travis-ci.org/felipemfp/dicio.svg?branch=master)](https://travis-ci.org/felipemfp/dicio) [![Coverage Status](https://coveralls.io/repos/github/felipemfp/dicio/badge.svg?branch=master)](https://coveralls.io/github/felipemfp/dicio?branch=master)
 
