@@ -1,6 +1,34 @@
 import unittest
+from dicio import Dicio, Word, Utils, dicio
+from urllib.error import URLError
+import os
 
-from dicio import Dicio, Word, Utils
+CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
+
+comilao = {
+    'meaning': 'adj. e s.m. Que ou aquele que come muito; comedor voraz, '
+               'glutão: é obeso porque é muito comilão.',
+    'synonyms': [
+        Word(word='regalão'),
+        Word(word='glutão'),
+        Word(word='guloso'),
+        Word(word='lambão')
+    ],
+    'word': 'comilão',
+    'url': 'http://www.dicio.com.br/comilao',
+    'extra': {
+        'Classe gramatical': 'adjetivo e substantivo masculino',
+        'Separação das sílabas': 'co-mi-lão',
+        'Plural': 'comilões'
+    }
+}
+
+
+def getFromFile(*args, **kwargs):
+    if 'raiseerror' in args[0]:
+        raise URLError('404: Not found')
+    return open(os.path.join(CURRENT_DIR, 'samples/20160129-comilao.html'),
+                mode='rb')
 
 
 class TestUtils(unittest.TestCase):
@@ -16,15 +44,32 @@ class TestUtils(unittest.TestCase):
         result = Utils.text_before(self.s, '</a>')
         self.assertEqual(expected, result)
 
+    def test_text_before_not_found(self):
+        expected = self.s
+        result = Utils.text_before(self.s, '</br>')
+        self.assertEqual(expected, result)
+
     def test_text_after(self):
         expected = 'Something</a>'
         result = Utils.text_after(self.s, '<a href="#">')
+        self.assertEqual(expected, result)
+
+    def test_text_after_not_found(self):
+        expected = self.s
+        result = Utils.text_after(self.s, '<h1>')
         self.assertEqual(expected, result)
 
     def test_text_between(self):
         expected = 'Something'
         result = Utils.text_between(self.s, '<a href="#">', '</a>')
         result_force_html = Utils.text_between(self.s, '<a', '/a', True)
+        self.assertEqual(expected, result)
+        self.assertEqual(expected, result_force_html)
+
+    def test_text_between_not_found(self):
+        expected = self.s
+        result = Utils.text_between(self.s, '<h1>', '</h1>')
+        result_force_html = Utils.text_between(self.s, '<h1', '/h1', True)
         self.assertEqual(expected, result)
         self.assertEqual(expected, result_force_html)
 
@@ -48,39 +93,108 @@ class TestUtils(unittest.TestCase):
 
 
 class TestWord(unittest.TestCase):
-    w = ' Comilão '
+
+    def setUp(self):
+        self.dicio = Dicio(getFromFile)
 
     def test_init(self):
-        expected_word = 'comilão'
-        expected_url = 'http://www.dicio.com.br/comilao'
-        word = Word(self.w)
+        # arrange
+        expected_word, expected_url = comilao['word'], comilao['url']
+
+        # act
+        word = Word(' Comilão ')
+
+        # assert
         self.assertEqual(expected_word, word.word)
         self.assertEqual(expected_url, word.url)
 
     def test_load(self):
-        expected = 'adj. e s.m. Que ou aquele que come muito; comedor voraz, glutão: é obeso porque é muito comilão.'
-        word = Word(self.w)
-        word.load()
+        # arrange
+        expected = comilao['meaning']
+        word = Word(comilao['word'])
+
+        # act
+        word.load(self.dicio)
+
+        # assert
         self.assertEqual(expected, word.meaning)
+
+    def test_load_with_custom_get(self):
+        # arrange
+        expected = comilao['meaning']
+        word = Word(comilao['word'])
+
+        # act
+        word.load(get=getFromFile)
+
+        # assert
+        self.assertEqual(expected, word.meaning)
+
+    def test_repr(self):
+        # arrange
+        instance = Word(comilao['word'])
+        expected = instance.__dict__
+
+        # assert
+        self.assertDictEqual(expected, eval(repr(instance)).__dict__)
+
+    def test_str(self):
+        # arrange
+        instance = Word(comilao['word'])
+        instance_with_meaning = Word(comilao['word'],
+                                     meaning=comilao['meaning'])
+        expected = '{}'.format(comilao['word'])
+        expected_with_meaning = '{}: {}'.format(comilao['word'],
+                                                comilao['meaning'])
+
+        # assert
+        self.assertEqual(expected, str(instance))
+        self.assertEqual(expected_with_meaning, str(instance_with_meaning))
 
 
 class TestDicio(unittest.TestCase):
-    w = 'doce'
+
+    def setUp(self):
+        self.dicio = Dicio(getFromFile)
 
     def test_search(self):
-        expected = Word(self.w)
-        expected.load()
+        # arrange
+        expected = Word(comilao['word'])
+        expected.meaning = comilao['meaning']
+        expected.synonyms = comilao['synonyms']
+        expected.extra = comilao['extra']
 
-        dicio = Dicio()
-        result = dicio.search(self.w)
+        # act
+        result = self.dicio.search(comilao['word'])
 
+        # assert
         self.assertEqual(expected.word, result.word)
         self.assertEqual(expected.url, result.url)
         self.assertEqual(expected.meaning, result.meaning)
-        self.assertEqual(expected.synonyms[0].word, result.synonyms[0].word)
-        self.assertEqual(expected.synonyms[-1].word, result.synonyms[-1].word)
-        self.assertEqual(len(expected.synonyms), len(result.synonyms))
+        self.assertListEqual(list(map(str, expected.synonyms)),
+                             list(map(str, result.synonyms)))
         self.assertDictEqual(expected.extra, result.extra)
+
+    def test_search_with_invalid_word(self):
+        # arrange
+        word = 'frases são inválidas'
+
+        # act
+        result = self.dicio.search(word)
+
+        # assert
+        self.assertIsNone(result)
+
+    def test_search_with_not_real_word_or_not_found(self):
+        # arrange
+        word = 'raiseerror'
+
+        # act
+        result = self.dicio.search(word)
+
+        # assert
+        self.assertIsNone(result)
+
 
 if __name__ == '__main__':
     unittest.main()
