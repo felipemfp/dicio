@@ -14,7 +14,6 @@ CHARSET = 'iso-8859-1'
 TAG_MEANING = ('class="significado', '</p>')
 TAG_SYNONYMS = ('class="adicional sinonimos"', '</p>')
 TAG_SYNONYMS_DELIMITER = ('<a', '</a>')
-TAG_ENCHANT = ('id="enchant"', '</div>')
 TAG_EXTRA = ('class="adicional"', '</p>')
 TAG_EXTRA_SEP = 'br'
 TAG_EXTRA_DELIMITER = ('<b>', '</b>')
@@ -29,14 +28,14 @@ class Word(object):
         self.synonyms = synonyms
         self.extra = extra
 
-    def load(self):
-        found = Dicio().search(self.word)
+    def load(self, get=None):
+        found = Dicio(get).search(self.word)
         self.meaning = found.meaning
         self.synonyms = found.synonyms
         self.extra = found.extra
 
     def __repr__(self):
-        return self.word
+        return 'Word({!r})'.format(self.word)
 
     def __str__(self):
         if self.meaning:
@@ -49,6 +48,12 @@ class Dicio(object):
     Dicio API with meaning, synonyms and extra information.
     """
 
+    get = request.urlopen
+
+    def __init__(self, get=request.urlopen):
+        if get is not None:
+            self.get = get
+
     def search(self, word):
         """
         Search for word.
@@ -58,12 +63,9 @@ class Dicio(object):
 
         _word = Utils.remove_accents(word).strip().lower()
         try:
-            url = request.urlopen(BASE_URL.format(_word))
+            with self.get(BASE_URL.format(_word)) as request:
+                page = html.unescape(request.read().decode(CHARSET))
         except:
-            return None
-        page = html.unescape(url.read().decode(CHARSET))
-
-        if page.find(TAG_ENCHANT[0]) > -1:
             return None
 
         found = Word(word)
@@ -77,9 +79,9 @@ class Dicio(object):
         """
         Return meaning.
         """
-        _page = Utils.text_between(page, *TAG_MEANING, force_html=True)
-        _page = Utils.remove_tags(_page)
-        return Utils.remove_spaces(_page)
+        html = Utils.text_between(page, *TAG_MEANING, force_html=True)
+        text = Utils.remove_tags(html)
+        return Utils.remove_spaces(text)
 
     def scrape_synonyms(self, page):
         """
@@ -97,7 +99,8 @@ class Dicio(object):
         """
         Return the first synonym found and html without his marking.
         """
-        synonym = Utils.text_between(html, *TAG_SYNONYMS_DELIMITER, force_html=True)
+        synonym = Utils.text_between(html, *TAG_SYNONYMS_DELIMITER,
+                                     force_html=True)
         synonym = Utils.remove_spaces(synonym)
         _html = html.replace(TAG_SYNONYMS_DELIMITER[0], "", 1)
         _html = _html.replace(TAG_SYNONYMS_DELIMITER[1], "", 1)
