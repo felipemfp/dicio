@@ -1,5 +1,3 @@
-# coding: utf-8
-
 class Utils(object):
     @staticmethod
     def remove_tags(str):

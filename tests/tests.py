@@ -1,10 +1,6 @@
-# coding: utf-8
-
 import unittest
 
-from dicio import Dicio
-from dicio import Word
-from dicio import Utils
+from dicio import Dicio, Word, Utils
 
 
 class TestUtils(unittest.TestCase):
