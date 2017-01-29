@@ -21,12 +21,19 @@ TAG_EXTRA_DELIMITER = ('<b>', '</b>')
 
 
 class Word(object):
+
     def __init__(self, word, meaning=None, synonyms=[], extra={}):
         self.word = word.strip().lower()
-        self.url = BASE_URL.format(Utils.remove_accents(word).strip().lower())
+        self.url = BASE_URL.format(Utils.remove_accents(self.word))
         self.meaning = meaning
         self.synonyms = synonyms
         self.extra = extra
+
+    def load(self):
+        found = Dicio().search(self.word)
+        self.meaning = found.meaning
+        self.synonyms = found.synonyms
+        self.extra = found.extra
 
     def __repr__(self):
         return self.word
@@ -35,12 +42,6 @@ class Word(object):
         if self.meaning:
             return self.word + ': ' + self.meaning
         return self.word
-
-    def load(self):
-        found = Dicio().search(self.word)
-        self.meaning = found.meaning
-        self.synonyms = found.synonyms
-        self.extra = found.extra
 
 
 class Dicio(object):
@@ -66,57 +67,56 @@ class Dicio(object):
             return None
 
         found = Word(word)
-        found.meaning = self.meaning(page)
-        found.synonyms = self.synonyms(page)
-        found.extra = self.extra(page)
+        found.meaning = self.scrape_meaning(page)
+        found.synonyms = self.scrape_synonyms(page)
+        found.extra = self.scrape_extra(page)
 
         return found
 
-    def meaning(self, page):
+    def scrape_meaning(self, page):
         """
         Return meaning.
         """
-        return Utils.remove_spaces(Utils.remove_tags(
-            Utils.text_between(page, TAG_MEANING[0],
-                               TAG_MEANING[1],
-                               True)))
+        _page = Utils.text_between(page, *TAG_MEANING, force_html=True)
+        _page = Utils.remove_tags(_page)
+        return Utils.remove_spaces(_page)
 
-    def synonyms(self, page):
+    def scrape_synonyms(self, page):
         """
         Return list of synonyms.
         """
         synonyms = []
         if page.find(TAG_SYNONYMS[0]) > -1:
-            synonyms_html = Utils.text_between(
-                page, TAG_SYNONYMS[0], TAG_SYNONYMS[1], True)
-            while synonyms_html.find(TAG_SYNONYMS_DELIMITER[0]) > -1:
-                synonym = Utils.text_between(synonyms_html,
-                                             TAG_SYNONYMS_DELIMITER[
-                                                 0], TAG_SYNONYMS_DELIMITER[1],
-                                             True)
-                synonyms.append(Word(Utils.remove_spaces(synonym)))
-                synonyms_html = synonyms_html.replace(
-                    TAG_SYNONYMS_DELIMITER[0], "", 1)
-                synonyms_html = synonyms_html.replace(
-                    TAG_SYNONYMS_DELIMITER[1], "", 1)
+            html = Utils.text_between(page, *TAG_SYNONYMS, force_html=True)
+            while html.find(TAG_SYNONYMS_DELIMITER[0]) > -1:
+                synonym, html = self.first_synonym(html)
+                synonyms.append(synonym)
         return synonyms
 
-    def extra(self, page):
+    def first_synonym(self, html):
+        """
+        Return the first synonym found and html without his marking.
+        """
+        synonym = Utils.text_between(html, *TAG_SYNONYMS_DELIMITER, force_html=True)
+        synonym = Utils.remove_spaces(synonym)
+        _html = html.replace(TAG_SYNONYMS_DELIMITER[0], "", 1)
+        _html = _html.replace(TAG_SYNONYMS_DELIMITER[1], "", 1)
+        return Word(synonym), _html
+
+    def scrape_extra(self, page):
         """
         Return a dictionary of extra information.
         """
-        dic_extra = {}
+        dict_extra = {}
         try:
             if page.find(TAG_EXTRA[0]) > -1:
-                extra_html = Utils.text_between(
-                    page, TAG_EXTRA[0], TAG_EXTRA[1], True)
-                extra_rows = Utils.split_html_tag(
-                    Utils.remove_spaces(extra_html), TAG_EXTRA_SEP)
+                html = Utils.text_between(page, *TAG_EXTRA, force_html=True)
+                extra_rows = Utils.split_html_tag(Utils.remove_spaces(html),
+                                                  TAG_EXTRA_SEP)
                 for row in extra_rows:
                     _row = Utils.remove_tags(row)
-                    key, value = _row.split(":")
-                    dic_extra[Utils.remove_spaces(
-                        key)] = Utils.remove_spaces(value)
+                    key, value = map(Utils.remove_spaces, _row.split(":"))
+                    dict_extra[key] = value
         except:
             pass
-        return dic_extra
+        return dict_extra
