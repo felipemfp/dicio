@@ -38,16 +38,20 @@ print(word.synonyms[0], word.synonyms[0].url, word.synonyms[0].meaning)
 ```
 
 ## Word details
+
 ### Attributes
+
 - **word** - the word itself
 - **url** - Dicio.com.br url for the word
 - **meaning** - the meaning
 
 ### Properties
+
 - **synonyms** - list of synonyms
 - **extra** - dictionary of extra information (keys in portuguese)
 
 ### Functions
+
 - **load** - load information from Dicio.com.br
 
 ## Contribute
