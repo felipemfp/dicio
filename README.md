@@ -4,7 +4,7 @@
 
 Python API for [Dicio.com.br](http://www.dicio.com.br/)
 
-![](https://67.media.tumblr.com/ed4ca12184eebd88bd57d42a12ff1729/tumblr_o7j7jpyDDX1vnlnoto1_1280.gif)
+![Demo](demo.gif)
 
 
 ## Installation
