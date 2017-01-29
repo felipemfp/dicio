@@ -1,5 +1,3 @@
-# coding: utf-8
-
 try:
     from setuptools import setup
 except ImportError:
@@ -7,7 +5,7 @@ except ImportError:
 
 setup(
     name='Dicio',
-    version='v1.0.0',
+    version='v1.0.1',
     author='Felipe Pontes',
     author_email='felipemfpontes@gmail.com',
     packages=['dicio', 'tests'],
