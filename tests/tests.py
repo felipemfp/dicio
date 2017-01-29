@@ -119,6 +119,17 @@ class TestWord(unittest.TestCase):
         # assert
         self.assertEqual(expected, word.meaning)
 
+    def test_load_with_custom_get(self):
+        # arrange
+        expected = comilao['meaning']
+        word = Word(comilao['word'])
+
+        # act
+        word.load(get=getFromFile)
+
+        # assert
+        self.assertEqual(expected, word.meaning)
+
     def test_repr(self):
         # arrange
         instance = Word(comilao['word'])
