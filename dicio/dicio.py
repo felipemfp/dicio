@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
 Unofficial Python API for Dicio.com.br
 
@@ -13,7 +11,7 @@ from dicio.utils import Utils
 
 BASE_URL = 'http://www.dicio.com.br/{}'
 CHARSET = 'iso-8859-1'
-TAG_MEANING = ('id="significado"', '</p>')
+TAG_MEANING = ('class="significado', '</p>')
 TAG_SYNONYMS = ('class="adicional sinonimos"', '</p>')
 TAG_SYNONYMS_DELIMITER = ('<a', '</a>')
 TAG_ENCHANT = ('id="enchant"', '</div>')
