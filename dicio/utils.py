@@ -38,7 +38,7 @@ class Utils(object):
         return str
 
     @staticmethod
-    def text_between(str, before, after, force_html = False):
+    def text_between(str, before, after, force_html=False):
         """
         Return text between before and after.
         Use force_html when before and after were html tags.
@@ -63,7 +63,8 @@ class Utils(object):
     @staticmethod
     def remove_spaces(str):
         """
-        Return a new string without double space, tabs, carriage return or line feed.
+        Return a new string without double space, tabs, carriage return
+        or line feed.
 
         >>> remove_spaces("Something  else")
         'Something else'
@@ -124,14 +125,15 @@ class Utils(object):
         """
         TEMPLATE = "<{0} />"
         templates = ["<{0}></{0}>",
-                   "<{0}></ {0}>",
-                   "<{0} ></{0}>",
-                   "<{0} ></ {0}>",
-                   "<{0}>",
-                   "<{0}/>",
-                   "<{0} >"]
+                     "<{0}></ {0}>",
+                     "<{0} ></{0}>",
+                     "<{0} ></ {0}>",
+                     "<{0}>",
+                     "<{0}/>",
+                     "<{0} >"]
 
         new_str = str
         for template in templates:
-            new_str = new_str.replace(template.format(tag), TEMPLATE.format(tag))
+            new_str = new_str.replace(
+                template.format(tag), TEMPLATE.format(tag))
         return list(filter(None, new_str.split(TEMPLATE.format(tag))))
