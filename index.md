@@ -2,7 +2,7 @@
 
 Python API for [Dicio.com.br](http://www.dicio.com.br/)
 
-![GIF demo](https://67.media.tumblr.com/ed4ca12184eebd88bd57d42a12ff1729/tumblr_o7j7jpyDDX1vnlnoto1_1280.gif)
+![GIF demo](https://cdn.rawgit.com/felipemfp/dicio/8b0e6b83/demo.gif)
 
 
 ## Installation
