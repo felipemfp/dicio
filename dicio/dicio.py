@@ -6,7 +6,7 @@ Unofficial Python API for Dicio.com.br
 """
 
 import html
-from urllib import request
+from urllib.request import urlopen
 from dicio.utils import Utils
 
 BASE_URL = 'http://www.dicio.com.br/{}'
@@ -28,11 +28,16 @@ class Word(object):
         self.synonyms = synonyms
         self.extra = extra
 
-    def load(self, get=None):
-        found = Dicio(get).search(self.word)
-        self.meaning = found.meaning
-        self.synonyms = found.synonyms
-        self.extra = found.extra
+    def load(self, dicio=None, get=urlopen):
+        if dicio:
+            found = dicio.search(self.word)
+        else:
+            found = Dicio(get).search(self.word)
+
+        if found is not None:
+            self.meaning = found.meaning
+            self.synonyms = found.synonyms
+            self.extra = found.extra
 
     def __repr__(self):
         return 'Word({!r})'.format(self.word)
@@ -48,11 +53,8 @@ class Dicio(object):
     Dicio API with meaning, synonyms and extra information.
     """
 
-    get = request.urlopen
-
-    def __init__(self, get=request.urlopen):
-        if get is not None:
-            self.get = get
+    def __init__(self, get=urlopen):
+        self.get = get
 
     def search(self, word):
         """
@@ -69,6 +71,7 @@ class Dicio(object):
             return None
 
         found = Word(word)
+
         found.meaning = self.scrape_meaning(page)
         found.synonyms = self.scrape_synonyms(page)
         found.extra = self.scrape_extra(page)

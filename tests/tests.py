@@ -94,6 +94,9 @@ class TestUtils(unittest.TestCase):
 
 class TestWord(unittest.TestCase):
 
+    def setUp(self):
+        self.dicio = Dicio(getFromFile)
+
     def test_init(self):
         # arrange
         expected_word, expected_url = comilao['word'], comilao['url']
@@ -111,7 +114,7 @@ class TestWord(unittest.TestCase):
         word = Word(comilao['word'])
 
         # act
-        word.load(getFromFile)
+        word.load(self.dicio)
 
         # assert
         self.assertEqual(expected, word.meaning)
