@@ -16,6 +16,11 @@ comilao = {
     ],
     'word': 'comilão',
     'url': 'http://www.dicio.com.br/comilao',
+    'examples': [
+        '"Em geral, quem consome carne é um bom comilão , come batata, não gosta muito de peixe e bebe mais. Folha de São Paulo, 11/08/2011',
+        'O urso mais comilão dos desenhos e seu amigo Catatau ganharam uma versão "live action" (com atores) na tela grande. Folha de São Paulo, 21/01/2011',
+        'Ringo consegue ainda mais comilão e destrói de tudo na casa Eurides Nascimento, em Matão (SP). Folha de São Paulo, 14/10/2011'
+    ],
     'extra': {
         'Classe gramatical': 'adjetivo e substantivo masculino',
         'Separação das sílabas': 'co-mi-lão',
@@ -162,6 +167,7 @@ class TestDicio(unittest.TestCase):
         expected = Word(comilao['word'])
         expected.meaning = comilao['meaning']
         expected.synonyms = comilao['synonyms']
+        expected.examples = comilao['examples']
         expected.extra = comilao['extra']
 
         # act
@@ -173,6 +179,7 @@ class TestDicio(unittest.TestCase):
         self.assertEqual(expected.meaning, result.meaning)
         self.assertListEqual(list(map(str, expected.synonyms)),
                              list(map(str, result.synonyms)))
+        self.assertListEqual(expected.examples, result.examples)
         self.assertDictEqual(expected.extra, result.extra)
 
     def test_search_with_invalid_word(self):

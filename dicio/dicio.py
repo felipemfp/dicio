@@ -17,16 +17,18 @@ TAG_SYNONYMS_DELIMITER = ('<a', '</a>')
 TAG_EXTRA = ('class="adicional"', '</p>')
 TAG_EXTRA_SEP = 'br'
 TAG_EXTRA_DELIMITER = ('<b>', '</b>')
+TAG_PHRASE_DELIMITER=('<div class="frase"','</div>')
 
 
 class Word(object):
 
-    def __init__(self, word, meaning=None, synonyms=[], extra={}):
+    def __init__(self, word, meaning=None, synonyms=[], examples=[], extra={}):
         self.word = word.strip().lower()
         self.url = BASE_URL.format(Utils.remove_accents(self.word))
         self.meaning = meaning
         self.synonyms = synonyms
         self.extra = extra
+        self.examples = examples
 
     def load(self, dicio=None, get=urlopen):
         if dicio:
@@ -38,6 +40,7 @@ class Word(object):
             self.meaning = found.meaning
             self.synonyms = found.synonyms
             self.extra = found.extra
+            self.examples = found.examples
 
     def __repr__(self):
         return 'Word({!r})'.format(self.word)
@@ -70,13 +73,12 @@ class Dicio(object):
         except:
             return None
 
-        found = Word(word)
-
-        found.meaning = self.scrape_meaning(page)
-        found.synonyms = self.scrape_synonyms(page)
-        found.extra = self.scrape_extra(page)
-
-        return found
+        return Word(word,
+            meaning=self.scrape_meaning(page),
+            synonyms=self.scrape_synonyms(page),
+            examples=self.scrape_examples(page),
+            extra=self.scrape_extra(page),
+        )
 
     def scrape_meaning(self, page):
         """
@@ -108,6 +110,21 @@ class Dicio(object):
         _html = html.replace(TAG_SYNONYMS_DELIMITER[0], "", 1)
         _html = _html.replace(TAG_SYNONYMS_DELIMITER[1], "", 1)
         return Word(synonym), _html
+
+    def scrape_examples(self, page):
+        """
+        Return a list of examples.
+        """
+        examples = []
+        html = page
+        index = html.find(TAG_PHRASE_DELIMITER[0])
+        while index > -1:
+            example_html = Utils.text_between(html, *TAG_PHRASE_DELIMITER, force_html=True)
+            examples += [Utils.remove_spaces(Utils.remove_tags(example_html))]
+            html = html[index+len(TAG_PHRASE_DELIMITER[0]):]
+            index = html.find(TAG_PHRASE_DELIMITER[0])
+        return examples
+
 
     def scrape_extra(self, page):
         """
