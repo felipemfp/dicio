@@ -5,10 +5,10 @@ except ImportError:
 
 setup(
     name='Dicio',
-    version='v1.0.1',
+    version='1.0.1',
     author='Felipe Pontes',
     author_email='felipemfpontes@gmail.com',
-    packages=['dicio', 'tests'],
+    packages=['dicio'],
     test_suite='tests',
     url='https://github.com/felipemfp/dicio',
     license='MIT License',
