@@ -7,4 +7,4 @@ Python API não oficial para Dicio.com.br
 from dicio.dicio import Dicio, Word
 from dicio.utils import Utils
 
-__version__ = '1.0.1'
+__version__ = '1.1.0'
