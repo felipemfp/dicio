@@ -17,7 +17,7 @@ TAG_SYNONYMS_DELIMITER = ('<a', '</a>')
 TAG_EXTRA = ('class="adicional"', '</p>')
 TAG_EXTRA_SEP = 'br'
 TAG_EXTRA_DELIMITER = ('<b>', '</b>')
-TAG_PHRASE_DELIMITER=('<div class="frase"','</div>')
+TAG_PHRASE_DELIMITER = ('<div class="frase"', '</div>')
 
 
 class Word(object):
@@ -37,6 +37,7 @@ class Word(object):
             found = Dicio(get).search(self.word)
 
         if found is not None:
+            self.word = found.word
             self.meaning = found.meaning
             self.synonyms = found.synonyms
             self.extra = found.extra
@@ -73,7 +74,8 @@ class Dicio(object):
         except:
             return None
 
-        return Word(word,
+        return Word(
+            Utils.text_between(page, "<h1", "</h1>",  force_html=True).lower(),
             meaning=self.scrape_meaning(page),
             synonyms=self.scrape_synonyms(page),
             examples=self.scrape_examples(page),
@@ -119,12 +121,12 @@ class Dicio(object):
         html = page
         index = html.find(TAG_PHRASE_DELIMITER[0])
         while index > -1:
-            example_html = Utils.text_between(html, *TAG_PHRASE_DELIMITER, force_html=True)
+            example_html = Utils.text_between(
+                html, *TAG_PHRASE_DELIMITER, force_html=True)
             examples += [Utils.remove_spaces(Utils.remove_tags(example_html))]
             html = html[index+len(TAG_PHRASE_DELIMITER[0]):]
             index = html.find(TAG_PHRASE_DELIMITER[0])
         return examples
-
 
     def scrape_extra(self, page):
         """

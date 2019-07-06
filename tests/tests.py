@@ -171,7 +171,7 @@ class TestDicio(unittest.TestCase):
         expected.extra = comilao['extra']
 
         # act
-        result = self.dicio.search(comilao['word'])
+        result = self.dicio.search('comilao')
 
         # assert
         self.assertEqual(expected.word, result.word)
