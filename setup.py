@@ -13,7 +13,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name='Dicio',
-    version='1.1.0',
+    version='1.2.0',
     author='Felipe Pontes',
     author_email='felipemfpontes@gmail.com',
     packages=['dicio'],
