@@ -10,8 +10,9 @@ from urllib.request import urlopen
 from dicio.utils import Utils
 
 BASE_URL = 'http://www.dicio.com.br/{}'
-CHARSET = 'iso-8859-1'
+CHARSET = 'utf-8'
 TAG_MEANING = ('class="significado', '</p>')
+TAG_ETYMOLOGY = ('class="etim', '</span>')
 TAG_SYNONYMS = ('class="adicional sinonimos"', '</p>')
 TAG_SYNONYMS_DELIMITER = ('<a', '</a>')
 TAG_EXTRA = ('class="adicional"', '</p>')
@@ -22,10 +23,11 @@ TAG_PHRASE_DELIMITER = ('<div class="frase"', '</div>')
 
 class Word(object):
 
-    def __init__(self, word, meaning=None, synonyms=[], examples=[], extra={}):
+    def __init__(self, word, meaning=None, etymology=None, synonyms=[], examples=[], extra={}):
         self.word = word.strip().lower()
         self.url = BASE_URL.format(Utils.remove_accents(self.word))
         self.meaning = meaning
+        self.etymology = etymology
         self.synonyms = synonyms
         self.extra = extra
         self.examples = examples
@@ -39,6 +41,7 @@ class Word(object):
         if found is not None:
             self.word = found.word
             self.meaning = found.meaning
+            self.etymology = found.etymology
             self.synonyms = found.synonyms
             self.extra = found.extra
             self.examples = found.examples
@@ -74,9 +77,12 @@ class Dicio(object):
         except:
             return None
 
+        meaning, etymology = self.scrape_meaning(page)
+
         return Word(
             Utils.text_between(page, "<h1", "</h1>",  force_html=True).lower(),
-            meaning=self.scrape_meaning(page),
+            meaning=meaning,
+            etymology=etymology,
             synonyms=self.scrape_synonyms(page),
             examples=self.scrape_examples(page),
             extra=self.scrape_extra(page),
@@ -84,11 +90,19 @@ class Dicio(object):
 
     def scrape_meaning(self, page):
         """
-        Return meaning.
+        Return meaning and etymology.
         """
         html = Utils.text_between(page, *TAG_MEANING, force_html=True)
-        text = Utils.remove_tags(html)
-        return Utils.remove_spaces(text)
+
+        etymology = Utils.text_between(html, *TAG_ETYMOLOGY, force_html=True)
+        etymology = Utils.remove_spaces(Utils.remove_tags(etymology))
+
+        meanings = Utils.split_html_tag(html, 'br')
+        meanings = [Utils.remove_spaces(Utils.remove_tags(x))
+                    for x in meanings]
+        meaning = '; '.join([x for x in meanings if x != etymology])
+
+        return meaning, etymology
 
     def scrape_synonyms(self, page):
         """
