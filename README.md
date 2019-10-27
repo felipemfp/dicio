@@ -49,6 +49,7 @@ print(word.synonyms[0], word.synonyms[0].url, word.synonyms[0].meaning)
 - **word** - the word itself
 - **url** - Dicio.com.br URL for the word
 - **meaning** - the meaning
+- **etymology** - the etymology
 
 ### Properties
 
