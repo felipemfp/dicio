@@ -2,24 +2,32 @@ import unittest
 from dicio import Dicio, Word, Utils, dicio
 from urllib.error import URLError
 import os
+from urllib.request import urlopen
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 comilao = {
-    'meaning': 'adj. e s.m. Que ou aquele que come muito; comedor voraz, '
-               'glutão: é obeso porque é muito comilão.',
+    'meaning': 'substantivo masculino Aquele que come muito, de maneira exagerada; glutão.; [Pejorativo] Indivíduo que ganha dinheiro ilicitamente; concussionário.; adjetivo Que come muito ou ganha dinheiro ilegalmente.',
+    'etymology': 'Etimologia (origem da palavra comilão ). Do latim comedone.',
     'synonyms': [
         Word(word='regalão'),
         Word(word='glutão'),
         Word(word='guloso'),
-        Word(word='lambão')
+        Word(word='lambão'),
+        Word(word='concussionário'),
     ],
     'word': 'comilão',
     'url': 'http://www.dicio.com.br/comilao',
+    'examples': [
+        '"Em geral, quem consome carne é um bom comilão , come batata, não gosta muito de peixe e bebe mais. Folha de S.Paulo, 11/08/2011',
+        'O urso mais comilão dos desenhos e seu amigo Catatau ganharam uma versão "live action" (com atores) na tela grande. Folha de S.Paulo, 21/01/2011',
+        'Ringo consegue ainda mais comilão e destrói de tudo na casa Eurides Nascimento, em Matão (SP). Folha de S.Paulo, 14/10/2011'
+    ],
     'extra': {
         'Classe gramatical': 'adjetivo e substantivo masculino',
-        'Separação das sílabas': 'co-mi-lão',
-        'Plural': 'comilões'
+        'Separação silábica': 'co-mi-lão',
+        'Plural': 'comilões',
+        'Feminino': 'comilona',
     }
 }
 
@@ -27,8 +35,9 @@ comilao = {
 def getFromFile(*args, **kwargs):
     if 'raiseerror' in args[0]:
         raise URLError('404: Not found')
-    return open(os.path.join(CURRENT_DIR, 'samples/20160129-comilao.html'),
-                mode='rb')
+    return urlopen(*args, **kwargs)
+    # return open(os.path.join(CURRENT_DIR, 'samples/20191027-comilao.html'),
+    #             mode='rb')
 
 
 class TestUtils(unittest.TestCase):
@@ -161,18 +170,22 @@ class TestDicio(unittest.TestCase):
         # arrange
         expected = Word(comilao['word'])
         expected.meaning = comilao['meaning']
+        expected.etymology = comilao['etymology']
         expected.synonyms = comilao['synonyms']
+        expected.examples = comilao['examples']
         expected.extra = comilao['extra']
 
         # act
-        result = self.dicio.search(comilao['word'])
+        result = self.dicio.search('comilao')
 
         # assert
         self.assertEqual(expected.word, result.word)
         self.assertEqual(expected.url, result.url)
         self.assertEqual(expected.meaning, result.meaning)
+        self.assertEqual(expected.etymology, result.etymology)
         self.assertListEqual(list(map(str, expected.synonyms)),
                              list(map(str, result.synonyms)))
+        self.assertListEqual(expected.examples, result.examples)
         self.assertDictEqual(expected.extra, result.extra)
 
     def test_search_with_invalid_word(self):
