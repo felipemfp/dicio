@@ -100,7 +100,7 @@ class Dicio(object):
         meanings = Utils.split_html_tag(html, 'br')
         meanings = [Utils.remove_spaces(Utils.remove_tags(x))
                     for x in meanings]
-        meaning = '; '.join([x for x in meanings if x != etymology])
+        meaning = [x for x in meanings if x != etymology]
 
         return meaning, etymology
 
