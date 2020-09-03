@@ -20,8 +20,8 @@ comilao = {
     'url': 'http://www.dicio.com.br/comilao',
     'examples': [
         '"Em geral, quem consome carne é um bom comilão , come batata, não gosta muito de peixe e bebe mais. Folha de S.Paulo, 11/08/2011',
-        'O urso mais comilão dos desenhos e seu amigo Catatau ganharam uma versão "live action" (com atores) na tela grande. Folha de S.Paulo, 21/01/2011',
-        'Ringo consegue ainda mais comilão e destrói de tudo na casa Eurides Nascimento, em Matão (SP). Folha de S.Paulo, 14/10/2011'
+        'O pequeno é esperto, comilão e tem um apelido muito carinhoso: Mug. Folha de S.Paulo, 29/07/2014',
+        'O urso mais comilão dos desenhos e seu amigo Catatau ganharam uma versão "live action" (com atores) na tela grande. Folha de S.Paulo, 21/01/2011'
     ],
     'extra': {
         'Classe gramatical': 'adjetivo e substantivo masculino',
