@@ -209,5 +209,66 @@ class TestDicio(unittest.TestCase):
         self.assertIsNone(result)
 
 
+from dicio.dicio import DicioAPI
+
+
+class TestDicioAPI(unittest.TestCase):
+
+    def setUp(self):
+        self.dicio = DicioAPI()
+
+    def test_get_meaning(self):
+        bencao = {'url' : 'bencao',
+                     'palavra' : 'bênção',
+                     'definicao' : [
+                         {'classificacao' : 's.f.',
+                          'acepcoes' : {
+                              '[Outros]' : [
+                                  'Ação de benzer, de abençoar, de invocar a graça divina sobre: o padre fazia a '
+                                  'bênção do pão e do vinho; o sacerdote deu sua bênção aos fiéis'],
+                              '[Religião]' : [
+                                  'Invocação dessa graça divina, através do sinal da cruz feito no ar com os dedos '
+                                  'ou por aspersão de água benta',
+                                  'Desejo de felicidade, de proteção de Deus a alguém',
+                                  'Graça concedida e atribuída a Deus: este trabalho foi uma bênção'],
+                              '[Por Extensão]' : ['O que acarreta o bem e felicidade: sua visita foi uma bênção'],
+                              '[Esporte]' : [
+                                  'Na capoeira, golpe feito pelo lutador com a sola do pé no tronco de seu oponente']
+                          },
+                          'etimologia' : ''
+                          },
+                         {'classificacao' : 'expr.',
+                          'acepcoes' : {'Geral' : ['Tomar a bênção. Beijar a mão de alguém, pedindo proteção divina']},
+                          'etimologia' : '(Etm. do latim: benedictio.onis)'
+                          }
+                     ],
+                     'silabas' : 'bên-ção',
+                     'sinonimos' : ['bendição', 'graça', 'felicidade', 'bença', 'benção'],
+                     'antonimos' : [],
+                     'frase' : [
+                         'O casamento, no sábado, teve bênção de um pastor, coral e amigos, enfermeiros e médicos '
+                         'como convidados.'],
+                     'citacao' : 'Os sábios não consideram que não errar é uma bênção. Eles acreditam antes que a grande '
+                                 'virtude do homem reside em sua habilidade de corrigir seus erros e continuamente fazer '
+                                 'de si próprio um homem novo.',
+                     'plurais' : 'bênçãos'}
+
+        # arrange
+        expected = Word(bencao['palavra'])
+        expected.meaning = bencao['definicao']
+
+        # act
+        result = self.dicio.search('bencao')
+
+        # assert
+        self.assertEqual(expected.word, result.word)
+        self.assertEqual(expected.url, result.url)
+        self.assertEqual(expected.meaning, result.meaning)
+
+
+
+
+
+
 if __name__ == '__main__':
     unittest.main()

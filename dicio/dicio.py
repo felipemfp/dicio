@@ -159,3 +159,150 @@ class Dicio(object):
         except:
             pass
         return dict_extra
+
+
+import requests
+from bs4 import BeautifulSoup
+
+class DicioAPI(object):
+    """
+    Dicio API with requests to own Dicio API.
+    """
+
+    def __init__(self) :
+
+        self.api_dicio = 'https://www.dicio.com.br/api/indexv2.php?p='
+        self.api_synon = 'https://www.sinonimos.com.br/api/?method=getSinonimos&palavra='
+        self.api_anton = 'https://www.antonimos.com.br/api/?method=getAntonimos&palavra='
+
+    def search(self, word):
+
+        # TODO A pesquisa por palavras se realiza por meio da url, e não pela lista.
+        #      Uma possível solução pode ser buscar a lista de palavras e guardar em um arquivo local e fazer consultas
+        #      caso a palavra pesquisada não seja a desejada.
+
+        try:
+            request = requests.get(self.api_dicio + str(word))
+            if 'error' in request.json():
+                suggestions = None
+                if request.json()['suggestions']:
+                    suggestions = [item['palavra'] for item in request.json()['suggestions']]
+
+                suggestions_text = 'Suggestions: {}'.format(', '.join(suggestions)) if suggestions else ''
+
+                print('No word found. {}'.format(suggestions_text))
+                return None
+            else:
+                return self.format_word(request.json())
+        except :
+            return None
+
+    def format_word(self, json_word):
+
+        meaning, etymology = self.get_meaning(json_word)
+
+        return Word(
+            json_word['palavra'],
+            meaning=meaning,
+            etymology=etymology,
+            synonyms=self.get_synonyms(json_word),
+            examples=self.get_examples(json_word),
+            extra=self.get_extra(json_word),
+        )
+
+    def get_meaning(self, json_word):
+
+        if 'definicao' in json_word:
+            grammar_definitions = dict()
+            etymologies = list()
+            for d in json_word['definicao']:
+                grammar = d['classificacao']
+                meanings = self.format_aceptions(d['acepcoes'])
+                grammar_definitions[grammar] = meanings
+                if 'etimologia' in d and d['etimologia']:
+                    etymologies.append(d['etimologia'])
+
+            return grammar_definitions, etymologies
+
+        else:
+
+            return None, None
+
+    def format_aceptions(self, aceptions: list):
+
+        if aceptions:
+            dict_aceptions = dict()
+            for i in aceptions:
+                xml = BeautifulSoup(i)
+                context = xml.find('span')
+                if context:
+
+                    sentence_formatted = i.replace(str(xml.find('span')) + " ", "")
+                    if context.text in dict_aceptions.keys():
+                        dict_aceptions[context.text].append(sentence_formatted)
+                    else:
+                        dict_aceptions[context.text] = [sentence_formatted]
+                else:
+                    if "[Outros]" in dict_aceptions.keys():
+                        dict_aceptions["[Outros]"].append(xml.text)
+                    else:
+                        dict_aceptions["[Outros]"] = [xml.text]
+
+            return dict_aceptions
+        else:
+            return None
+
+    def get_synonyms(self, json_word) :
+        return ''
+
+    def get_antonyms(self, json_word) :
+        return ''
+
+    def get_examples(self, json_word) :
+        return ''
+
+    def get_extra(self, json_word) :
+        return ''
+
+    def get_synonyms_json(self, word):
+
+        request = requests.get(self.api_synon + str(word))
+
+        return request.json() if request.status_code == 200 else None
+
+    def get_antonyms_json(self, word):
+
+        request = requests.get(self.api_anton + str(word))
+
+        return request.json() if request.status_code == 200 else None
+
+    def get_inverse_gender_word(self, word, masculine = True):
+
+        definition = self.get_definition_json(word)
+
+        if not 'error' in definition.keys():
+
+            if 'femininos' in definition.keys():
+                return definition['femininos'] if masculine else definition['palavra']
+            elif 'masculinos' in definition.keys():
+                return definition['masculinos'] if not masculine else definition['palavra']
+            else:
+                return definition['palavra']
+
+        else:
+            return None
+
+    def get_masculine_word(self, word):
+        return self.get_inverse_gender_word(word, False)
+
+    def get_feminine_word(self, word) :
+        return self.get_inverse_gender_word(word, True)
+
+    def get_plural_word(self, word):
+
+        definition = self.get_definition_json(word)
+
+        if 'plurais' in definition:
+            return definition['plurais']
+        else:
+            return None

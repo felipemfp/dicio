@@ -1,0 +1,30 @@
+{"url" : "bencao",
+"palavra" : "bênção",
+"definicao" : [
+    {
+        "classificacao" : "s.f.",
+        "acepcoes" : [
+            "Ação de benzer, de abençoar, de invocar a graça divina sobre: o padre fazia a bênção do pão e do vinho; o sacerdote deu sua bênção aos fiéis",
+            "<span class=\"tag\">[Religião]</span> Invocação dessa graça divina, através do sinal da cruz feito no ar com os dedos ou por aspersão de água benta",
+            "<span class=\"tag\">[Religião]</span> Desejo de felicidade, de proteção de Deus a alguém",
+            "<span class=\"tag\">[Religião]</span> Graça concedida e atribuída a Deus: este trabalho foi uma bênção",
+            "<span class=\"tag\">[Por Extensão]</span> O que acarreta o bem e felicidade: sua visita foi uma bênção",
+            "<span class=\"tag\">[Esporte]</span> Na capoeira, golpe feito pelo lutador com a sola do pé no tronco de seu oponente"
+        ],
+        "etimologia" : ""
+    },
+    {
+        "classificacao" : "expr.",
+        "acepcoes" : [
+            "Tomar a bênção. Beijar a mão de alguém, pedindo proteção divina"
+        ],
+        "etimologia" : "(Etm. do latim: benedictio.onis)"
+    }
+],
+"silabas" : "bên-ção",
+"sinonimos" : "bendição;graça;felicidade;bença;benção",
+"antonimos" : "",
+"frase" : "O casamento, no sábado, teve bênção de um pastor, coral e amigos, enfermeiros e médicos como convidados.",
+"citacao" : "Os sábios não consideram que não errar é uma bênção. Eles acreditam antes que a grande virtude do homem reside em sua habilidade de corrigir seus erros e continuamente fazer de si próprio um homem novo.",
+"plurais" : "bênçãos"
+}
