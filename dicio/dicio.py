@@ -23,7 +23,9 @@ TAG_PHRASE_DELIMITER = ('<div class="frase"', '</div>')
 
 class Word(object):
 
-    def __init__(self, word, meaning=None, etymology=None, synonyms=[], examples=[], extra={}):
+    def __init__(self, word, meaning=None, etymology=None, synonyms=[], antonyms=[], examples=[],
+                 masculine=None, feminine=None, extra={}):
+
         self.word = word.strip().lower()
         self.url = BASE_URL.format(Utils.remove_accents(self.word))
         self.meaning = meaning
@@ -31,6 +33,9 @@ class Word(object):
         self.synonyms = synonyms
         self.extra = extra
         self.examples = examples
+        self.antonyms = antonyms
+        self.masculine = masculine
+        self.feminine = feminine
 
     def load(self, dicio=None, get=urlopen):
         if dicio:
@@ -194,75 +199,84 @@ class DicioAPI(object):
                 return None
             else:
                 return self.format_word(request.json())
-        except :
+        except:
             return None
 
     def format_word(self, json_word):
 
-        meaning, etymology = self.get_meaning(json_word)
+        meaning = self.get_meaning(json_word)
 
         return Word(
             json_word['palavra'],
             meaning=meaning,
-            etymology=etymology,
             synonyms=self.get_synonyms(json_word),
+            antonyms=self.get_antonyms(json_word),
+            masculine=self.get_masculine_word(json_word),
+            feminine=self.get_feminine_word(json_word),
             examples=self.get_examples(json_word),
-            extra=self.get_extra(json_word),
         )
 
     def get_meaning(self, json_word):
 
         if 'definicao' in json_word:
-            grammar_definitions = dict()
-            etymologies = list()
+            definitions = list()
             for d in json_word['definicao']:
-                grammar = d['classificacao']
-                meanings = self.format_aceptions(d['acepcoes'])
-                grammar_definitions[grammar] = meanings
-                if 'etimologia' in d and d['etimologia']:
-                    etymologies.append(d['etimologia'])
+                classification = dict()
+                classification['classificacao'] = d['classificacao']
+                classification['acepcoes'] = self.format_aceptions(d['acepcoes'])
+                if 'etimologia' in d:
+                    classification['etimologia'] = d['etimologia']
 
-            return grammar_definitions, etymologies
+                definitions.append(classification)
+
+            return definitions
 
         else:
-
-            return None, None
+            return None
 
     def format_aceptions(self, aceptions: list):
 
         if aceptions:
             dict_aceptions = dict()
             for i in aceptions:
-                xml = BeautifulSoup(i)
+                xml = BeautifulSoup(i, 'html.parser')
                 context = xml.find('span')
                 if context:
-
                     sentence_formatted = i.replace(str(xml.find('span')) + " ", "")
                     if context.text in dict_aceptions.keys():
                         dict_aceptions[context.text].append(sentence_formatted)
                     else:
                         dict_aceptions[context.text] = [sentence_formatted]
                 else:
-                    if "[Outros]" in dict_aceptions.keys():
-                        dict_aceptions["[Outros]"].append(xml.text)
+                    if "[Geral]" in dict_aceptions.keys():
+                        dict_aceptions["[Geral]"].append(xml.text)
                     else:
-                        dict_aceptions["[Outros]"] = [xml.text]
+                        dict_aceptions["[Geral]"] = [xml.text]
 
             return dict_aceptions
         else:
             return None
 
-    def get_synonyms(self, json_word) :
-        return ''
+    def get_synonyms(self, json_word):
+        if 'sinonimos' in json_word:
+            return json_word['sinonimos'].split(';')
+        else:
+            return ''
 
-    def get_antonyms(self, json_word) :
-        return ''
+    def get_antonyms(self, json_word):
+        if 'antonimos' in json_word:
+            return json_word['antonimos'].split(';')
+        else:
+            return ''
 
-    def get_examples(self, json_word) :
-        return ''
+    def get_examples(self, json_word):
+        if 'frase' in json_word:
+            return json_word['frase'].split(';')
+        else:
+            return ''
 
-    def get_extra(self, json_word) :
-        return ''
+    def get_extra(self, json_word):
+        return json_word['extra'] if 'extra' in json_word else ''
 
     def get_synonyms_json(self, word):
 
@@ -276,33 +290,24 @@ class DicioAPI(object):
 
         return request.json() if request.status_code == 200 else None
 
-    def get_inverse_gender_word(self, word, masculine = True):
+    def get_inverse_gender_word(self, json_word, masculine = True):
 
-        definition = self.get_definition_json(word)
-
-        if not 'error' in definition.keys():
-
-            if 'femininos' in definition.keys():
-                return definition['femininos'] if masculine else definition['palavra']
-            elif 'masculinos' in definition.keys():
-                return definition['masculinos'] if not masculine else definition['palavra']
-            else:
-                return definition['palavra']
-
+        if 'femininos' in json_word:
+            return json_word['femininos'] if masculine else json_word['palavra']
+        elif 'masculinos' in json_word:
+            return json_word['masculinos'] if not masculine else json_word['palavra']
         else:
-            return None
+            return json_word['palavra']
 
-    def get_masculine_word(self, word):
-        return self.get_inverse_gender_word(word, False)
+    def get_masculine_word(self, json_word):
+        return self.get_inverse_gender_word(json_word, False)
 
-    def get_feminine_word(self, word) :
-        return self.get_inverse_gender_word(word, True)
+    def get_feminine_word(self, json_word) :
+        return self.get_inverse_gender_word(json_word, True)
 
-    def get_plural_word(self, word):
+    def get_plural_word(self, json_word):
 
-        definition = self.get_definition_json(word)
-
-        if 'plurais' in definition:
-            return definition['plurais']
+        if 'plurais' in json_word:
+            return json_word['plurais']
         else:
             return None

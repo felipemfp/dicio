@@ -217,45 +217,66 @@ class TestDicioAPI(unittest.TestCase):
     def setUp(self):
         self.dicio = DicioAPI()
 
+        self.bencao = {'url': 'bencao',
+                      'palavra': 'bênção',
+                      'definicao': [
+                        {
+                          'classificacao': 's.f.',
+                          'acepcoes': {
+                            '[Geral]': ['Ação de benzer, de abençoar, de invocar a graça divina sobre: o padre fazia a '
+                                      'bênção do pão e do vinho; o sacerdote deu sua bênção aos fiéis'],
+                            '[Religião]': ['Invocação dessa graça divina, através do sinal da cruz feito no ar com os dedos ou por aspersão de água benta',
+                                         'Desejo de felicidade, de proteção de Deus a alguém',
+                                         'Graça concedida e atribuída a Deus: este trabalho foi uma bênção'],
+                            '[Por Extensão]': ['O que acarreta o bem e felicidade: sua visita foi uma bênção'],
+                            '[Esporte]': ['Na capoeira, golpe feito pelo lutador com a sola do pé no tronco de seu oponente']
+                          },
+                          'etimologia': ''
+                        },
+                        {
+                          'classificacao': 'expr.',
+                          'acepcoes': {'[Geral]': ['Tomar a bênção. Beijar a mão de alguém, pedindo proteção divina']},
+                          'etimologia': '(Etm. do latim: benedictio.onis)'
+                        }
+                      ],
+                      'silabas': 'bên-ção',
+                      'sinonimos': ['bendição', 'graça', 'felicidade', 'bença', 'benção'],
+                      'antonimos': [],
+                      'frase': ['O casamento, no sábado, teve bênção de um pastor, coral e amigos, enfermeiros e médicos como convidados.'],
+                      'citacao': ['Os sábios não consideram que não errar é uma bênção. Eles acreditam antes que a grande '
+                                  'virtude do homem reside em sua habilidade de corrigir seus erros e continuamente fazer '
+                                  'de si próprio um homem novo.'],
+                      'plurais': 'bênçãos'}
+
+        self.lindo  = { "url": "lindo",
+                        "palavra": "lindo",
+                        "definicao":
+                            {"classificacao": "adj.",
+                             "acepcoes":
+                                {'[Outros]':
+                                     ["Excessivamente bonito; que é bom de se ouvir e/ou ver; belo: um monumento lindo",
+                                      "Em que há perfeição; perfeito: sinfonia cujos arranjos são lindos",
+                                      "Que pode ser definido por possuir harmonia; elegante ou harmonioso: ela trazia um lindo sapato",
+                                      "Que ocasiona prazer; prazeroso: passamos uma linda tarde na praia"]},
+                                "etimologia": "(Etm. talvez do latim: limpidus/legitimus)",
+                            },
+                        "silabas": "lin-do",
+                        "sinonimos": ["agradável", "airoso", "belo", "bonito", "formoso", "gracioso", "primoroso",
+                                      "vistoso", "prazeroso", "harmonioso", "perfeito"],
+                        "antonimos": ["feio", "horroroso"],
+                        "frase": ["As quatro câmeras que captam o que se passa no palco dão um clima de programa de auditório. "
+                                  "Por outro lado, se a medida forem os gritos de \"lindo!\" e \"gostoso!\" vindos da "
+                                  "plateia feminina em fartas doses, o desavisado pensará estar num show da \"boy band\" da hora."],
+                        "citacao": ["o arrozal lindo\npor cima do mundo\nno miolo da luz"],
+                        "femininos": "linda",
+                        "plurais": "lindos"
+                        }
+
     def test_get_meaning(self):
-        bencao = {'url' : 'bencao',
-                     'palavra' : 'bênção',
-                     'definicao' : [
-                         {'classificacao' : 's.f.',
-                          'acepcoes' : {
-                              '[Outros]' : [
-                                  'Ação de benzer, de abençoar, de invocar a graça divina sobre: o padre fazia a '
-                                  'bênção do pão e do vinho; o sacerdote deu sua bênção aos fiéis'],
-                              '[Religião]' : [
-                                  'Invocação dessa graça divina, através do sinal da cruz feito no ar com os dedos '
-                                  'ou por aspersão de água benta',
-                                  'Desejo de felicidade, de proteção de Deus a alguém',
-                                  'Graça concedida e atribuída a Deus: este trabalho foi uma bênção'],
-                              '[Por Extensão]' : ['O que acarreta o bem e felicidade: sua visita foi uma bênção'],
-                              '[Esporte]' : [
-                                  'Na capoeira, golpe feito pelo lutador com a sola do pé no tronco de seu oponente']
-                          },
-                          'etimologia' : ''
-                          },
-                         {'classificacao' : 'expr.',
-                          'acepcoes' : {'Geral' : ['Tomar a bênção. Beijar a mão de alguém, pedindo proteção divina']},
-                          'etimologia' : '(Etm. do latim: benedictio.onis)'
-                          }
-                     ],
-                     'silabas' : 'bên-ção',
-                     'sinonimos' : ['bendição', 'graça', 'felicidade', 'bença', 'benção'],
-                     'antonimos' : [],
-                     'frase' : [
-                         'O casamento, no sábado, teve bênção de um pastor, coral e amigos, enfermeiros e médicos '
-                         'como convidados.'],
-                     'citacao' : 'Os sábios não consideram que não errar é uma bênção. Eles acreditam antes que a grande '
-                                 'virtude do homem reside em sua habilidade de corrigir seus erros e continuamente fazer '
-                                 'de si próprio um homem novo.',
-                     'plurais' : 'bênçãos'}
 
         # arrange
-        expected = Word(bencao['palavra'])
-        expected.meaning = bencao['definicao']
+        expected = Word(self.bencao['palavra'])
+        expected.meaning = self.bencao['definicao']
 
         # act
         result = self.dicio.search('bencao')
@@ -266,9 +287,46 @@ class TestDicioAPI(unittest.TestCase):
         self.assertEqual(expected.meaning, result.meaning)
 
 
+    def test_gender(self):
+
+        # arrange
+        expected = Word(self.lindo['palavra'])
+        expected.feminine = self.lindo['femininos']
+        expected.masculine = self.lindo['palavra']
+
+        # act
+        result = self.dicio.search('lindo')
+
+        # assert
+        self.assertEqual(expected.feminine, result.feminine)
 
 
 
+    def test_format_aceptions(self):
+
+        # arrange
+        input = [
+            "Ação de benzer, de abençoar, de invocar a graça divina sobre: o padre fazia a bênção do pão e do vinho; o sacerdote deu sua bênção aos fiéis",
+            "<span class=\"tag\">[Religião]</span> Invocação dessa graça divina, através do sinal da cruz feito no ar com os dedos ou por aspersão de água benta",
+            "<span class=\"tag\">[Religião]</span> Desejo de felicidade, de proteção de Deus a alguém",
+            "<span class=\"tag\">[Religião]</span> Graça concedida e atribuída a Deus: este trabalho foi uma bênção",
+            "<span class=\"tag\">[Por Extensão]</span> O que acarreta o bem e felicidade: sua visita foi uma bênção",
+            "<span class=\"tag\">[Esporte]</span> Na capoeira, golpe feito pelo lutador com a sola do pé no tronco de seu oponente"
+        ]
+        expected = {'[Geral]': ['Ação de benzer, de abençoar, de invocar a graça divina sobre: o padre fazia a '
+                                      'bênção do pão e do vinho; o sacerdote deu sua bênção aos fiéis'],
+                    '[Religião]': ['Invocação dessa graça divina, através do sinal da cruz feito no ar com os dedos ou por '
+                                 'aspersão de água benta',
+                                 'Desejo de felicidade, de proteção de Deus a alguém',
+                                 'Graça concedida e atribuída a Deus: este trabalho foi uma bênção'],
+                    '[Por Extensão]': ['O que acarreta o bem e felicidade: sua visita foi uma bênção'],
+                    '[Esporte]': ['Na capoeira, golpe feito pelo lutador com a sola do pé no tronco de seu oponente']}
+
+        # act
+        result = self.dicio.format_aceptions(input)
+
+        # assert
+        self.assertEqual(expected, result)
 
 if __name__ == '__main__':
     unittest.main()

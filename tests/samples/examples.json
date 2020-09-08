@@ -1,4 +1,4 @@
-{"url" : "bencao",
+[{"url" : "bencao",
 "palavra" : "bênção",
 "definicao" : [
     {
@@ -27,4 +27,27 @@
 "frase" : "O casamento, no sábado, teve bênção de um pastor, coral e amigos, enfermeiros e médicos como convidados.",
 "citacao" : "Os sábios não consideram que não errar é uma bênção. Eles acreditam antes que a grande virtude do homem reside em sua habilidade de corrigir seus erros e continuamente fazer de si próprio um homem novo.",
 "plurais" : "bênçãos"
-}
+},
+
+{"url": "lindo",
+"palavra": "lindo",
+"definicao": [
+    {
+        "classificacao": "adj.",
+        "acepcoes": [
+        "Excessivamente bonito; que é bom de se ouvir e/ou ver; belo: um monumento lindo",
+        "Em que há perfeição; perfeito: sinfonia cujos arranjos são lindos",
+        "Que pode ser definido por possuir harmonia; elegante ou harmonioso: ela trazia um lindo sapato",
+        "Que ocasiona prazer; prazeroso: passamos uma linda tarde na praia"
+        ],
+        "etimologia": "(Etm. talvez do latim: limpidus/legitimus)"
+    }
+    ],
+"silabas": "lin-do",
+"sinonimos": "agradável;airoso;belo;bonito;formoso;gracioso;primoroso;vistoso;prazeroso;harmonioso;perfeito",
+"antonimos": "feio;horroroso",
+"frase": "As quatro câmeras que captam o que se passa no palco dão um clima de programa de auditório. Por outro lado, se a medida forem os gritos de \"lindo!\" e \"gostoso!\" vindos da plateia feminina em fartas doses, o desavisado pensará estar num show da \"boy band\" da hora.",
+"citacao": "o arrozal lindo\npor cima do mundo\nno miolo da luz",
+"femininos": "linda",
+"plurais": "lindos"
+}]
