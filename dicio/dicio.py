@@ -23,7 +23,9 @@ TAG_PHRASE_DELIMITER = ('<div class="frase"', '</div>')
 
 class Word(object):
 
-    def __init__(self, word, meaning=None, etymology=None, synonyms=[], examples=[], extra={}):
+    def __init__(self, word, meaning=None, etymology=None, synonyms=[], examples=[], extra={},
+                 antonyms=[], masculine=None, feminine=None, singular=[], plural=[]):
+
         self.word = word.strip().lower()
         self.url = BASE_URL.format(Utils.remove_accents(self.word))
         self.meaning = meaning
@@ -31,6 +33,11 @@ class Word(object):
         self.synonyms = synonyms
         self.extra = extra
         self.examples = examples
+        self.antonyms = antonyms
+        self.masculine = masculine
+        self.feminine = feminine
+        self.singular = singular
+        self.plural = plural
 
     def load(self, dicio=None, get=urlopen):
         if dicio:
@@ -159,3 +166,115 @@ class Dicio(object):
         except:
             pass
         return dict_extra
+
+
+import requests
+from bs4 import BeautifulSoup
+
+class DicioAPI(object):
+    """
+    Dicio API requests to official Dicio API with meaning, synonyms, antonyms, plural and gender-relative variation.
+    There is no extra info. For this, use class Dicio.
+    """
+
+    def __init__(self) :
+
+        self.api_dicio = 'https://www.dicio.com.br/api/indexv2.php?p={}'
+        self.api_synon = 'https://www.sinonimos.com.br/api/?method=getSinonimos&palavra={}'
+        self.api_anton = 'https://www.antonimos.com.br/api/?method=getAntonimos&palavra={}'
+
+    def search(self, word):
+
+        try:
+            with requests.get(self.api_dicio.format(word)) as request:
+                if 'error' in request.json():
+                    suggestions = None
+                    if request.json()['suggestions']:
+                        suggestions = [item['palavra'] for item in request.json()['suggestions']]
+
+                    suggestions_text = 'Suggestions: {}'.format(', '.join(suggestions)) if suggestions else ''
+                    print('No word found. {}'.format(suggestions_text))
+                    return None
+                else:
+                    return self.format_word(request.json())
+        except:
+            return None
+
+    def format_word(self, json_word):
+
+        meaning = self.get_meaning(json_word)
+
+        return Word(
+            json_word['palavra'],
+            meaning=meaning,
+            synonyms=self.get_synonyms(json_word),
+            antonyms=self.get_antonyms(json_word),
+            masculine=self.get_masculine(json_word),
+            feminine=self.get_feminine(json_word),
+            singular=self.get_singular(json_word),
+            plural=self.get_plural(json_word),
+            examples=self.get_examples(json_word),
+        )
+
+    def get_meaning(self, json_word):
+
+        if 'definicao' in json_word:
+            definitions = list()
+            for d in json_word['definicao']:
+                classification = dict()
+                classification['classificacao'] = d['classificacao']
+                classification['acepcoes'] = self.format_aceptions(d['acepcoes'])
+                if 'etimologia' in d:
+                    classification['etimologia'] = d['etimologia']
+
+                definitions.append(classification)
+
+            return definitions
+
+        else:
+            return None
+
+    def format_aceptions(self, aceptions: list):
+
+        if aceptions:
+            dict_aceptions = dict()
+            for i in aceptions:
+                xml = BeautifulSoup(i, 'html.parser')
+                context = xml.find('span')
+                if context:
+                    sentence_formatted = i.replace(str(xml.find('span')) + " ", "")
+                    if context.text in dict_aceptions.keys():
+                        dict_aceptions[context.text].append(sentence_formatted)
+                    else:
+                        dict_aceptions[context.text] = [sentence_formatted]
+                else:
+                    if "[Outros]" in dict_aceptions.keys():
+                        dict_aceptions["[Outros]"].append(xml.text)
+                    else:
+                        dict_aceptions["[Outros]"] = [xml.text]
+
+            return dict_aceptions
+        else:
+            return None
+
+    def get_synonyms(self, json_word):
+        return json_word['sinonimos'].split(';') if 'sinonimos' in json_word else None
+
+    def get_antonyms(self, json_word):
+        return json_word['antonimos'].split(';') if 'antonimos' in json_word else None
+
+    def get_examples(self, json_word):
+        return json_word['frase'].split(';') if 'frase' in json_word else None
+
+    def get_singular(self, json_word):
+        return json_word['singulares'].split(';') if 'singulares' in json_word else None
+
+    def get_plural(self, json_word):
+        return json_word['plurais'].split(';') if 'plurais' in json_word else None
+
+    def get_masculine(self, json_word):
+        return json_word['masculinos'].split(';') if 'masculinos' in json_word else None
+
+    def get_feminine(self, json_word) :
+        return json_word['femininos'].split(';') if 'femininos' in json_word else None
+
