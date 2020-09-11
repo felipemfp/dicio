@@ -168,10 +168,7 @@ class Dicio(object):
         return dict_extra
 
 
-import re
 import requests
-import os
-import pickle
 from bs4 import BeautifulSoup
 
 class DicioAPI(object):
