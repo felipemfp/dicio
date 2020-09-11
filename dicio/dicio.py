@@ -23,8 +23,8 @@ TAG_PHRASE_DELIMITER = ('<div class="frase"', '</div>')
 
 class Word(object):
 
-    def __init__(self, word, meaning=None, etymology=None, synonyms=[], antonyms=[], examples=[],
-                 masculine=None, feminine=None, extra={}):
+    def __init__(self, word, meaning=None, etymology=None, synonyms=[], examples=[], extra={},
+                 antonyms=[], masculine=None, feminine=None, singular=[], plural=[]):
 
         self.word = word.strip().lower()
         self.url = BASE_URL.format(Utils.remove_accents(self.word))
@@ -36,6 +36,8 @@ class Word(object):
         self.antonyms = antonyms
         self.masculine = masculine
         self.feminine = feminine
+        self.singular = singular
+        self.plural = plural
 
     def load(self, dicio=None, get=urlopen):
         if dicio:
@@ -166,39 +168,40 @@ class Dicio(object):
         return dict_extra
 
 
+import re
 import requests
+import os
+import pickle
 from bs4 import BeautifulSoup
 
 class DicioAPI(object):
     """
-    Dicio API with requests to own Dicio API.
+    Dicio API requests to official Dicio API with meaning, synonyms, antonyms, plural and gender-relative variation.
+    There is no extra info. For this, use class Dicio.
     """
 
     def __init__(self) :
 
-        self.api_dicio = 'https://www.dicio.com.br/api/indexv2.php?p='
-        self.api_synon = 'https://www.sinonimos.com.br/api/?method=getSinonimos&palavra='
-        self.api_anton = 'https://www.antonimos.com.br/api/?method=getAntonimos&palavra='
+        self.api_dicio = 'https://www.dicio.com.br/api/indexv2.php?p={}'
+        self.api_synon = 'https://www.sinonimos.com.br/api/?method=getSinonimos&palavra={}'
+        self.api_anton = 'https://www.antonimos.com.br/api/?method=getAntonimos&palavra={}'
+
 
     def search(self, word):
 
-        # TODO A pesquisa por palavras se realiza por meio da url, e não pela lista.
-        #      Uma possível solução pode ser buscar a lista de palavras e guardar em um arquivo local e fazer consultas
-        #      caso a palavra pesquisada não seja a desejada.
-
         try:
-            request = requests.get(self.api_dicio + str(word))
-            if 'error' in request.json():
-                suggestions = None
-                if request.json()['suggestions']:
-                    suggestions = [item['palavra'] for item in request.json()['suggestions']]
+            with requests.get(self.api_dicio.format(word)) as request:
+                if 'error' in request.json():
+                    suggestions = None
+                    if request.json()['suggestions']:
+                        suggestions = [item['palavra'] for item in request.json()['suggestions']]
 
-                suggestions_text = 'Suggestions: {}'.format(', '.join(suggestions)) if suggestions else ''
-
-                print('No word found. {}'.format(suggestions_text))
-                return None
-            else:
-                return self.format_word(request.json())
+                    suggestions_text = 'Suggestions: {}'.format(', '.join(suggestions)) if suggestions else ''
+                    print('No word found. {}'.format(suggestions_text))
+                    return None
+                else:
+                    valid_word = self.validate_word(request.json())
+                    return self.format_word(valid_word)
         except:
             return None
 
@@ -213,6 +216,8 @@ class DicioAPI(object):
             antonyms=self.get_antonyms(json_word),
             masculine=self.get_masculine_word(json_word),
             feminine=self.get_feminine_word(json_word),
+            singular=self.get_singular(json_word),
+            plural=self.get_plural(json_word),
             examples=self.get_examples(json_word),
         )
 
@@ -248,47 +253,45 @@ class DicioAPI(object):
                     else:
                         dict_aceptions[context.text] = [sentence_formatted]
                 else:
-                    if "[Geral]" in dict_aceptions.keys():
-                        dict_aceptions["[Geral]"].append(xml.text)
+                    if "[Outros]" in dict_aceptions.keys():
+                        dict_aceptions["[Outros]"].append(xml.text)
                     else:
-                        dict_aceptions["[Geral]"] = [xml.text]
+                        dict_aceptions["[Outros]"] = [xml.text]
 
             return dict_aceptions
         else:
             return None
 
     def get_synonyms(self, json_word):
-        if 'sinonimos' in json_word:
-            return json_word['sinonimos'].split(';')
-        else:
-            return ''
+        return json_word['sinonimos'].split(';') if 'sinonimos' in json_word else None
 
     def get_antonyms(self, json_word):
-        if 'antonimos' in json_word:
-            return json_word['antonimos'].split(';')
-        else:
-            return ''
+        return json_word['antonimos'].split(';') if 'antonimos' in json_word else None
 
     def get_examples(self, json_word):
-        if 'frase' in json_word:
-            return json_word['frase'].split(';')
-        else:
-            return ''
+        return json_word['frase'].split(';') if 'frase' in json_word else None
 
-    def get_extra(self, json_word):
-        return json_word['extra'] if 'extra' in json_word else ''
+    def get_singular(self, json_word):
+        return json_word['singulares'].split(';') if 'singulares' in json_word else None
+
+    def get_plural(self, json_word):
+        return json_word['plurais'].split(';') if 'plurais' in json_word else None
 
     def get_synonyms_json(self, word):
 
-        request = requests.get(self.api_synon + str(word))
-
-        return request.json() if request.status_code == 200 else None
+        try:
+            with requests.get(self.api_synon.format(word)) as request:
+                return request.json()
+        except:
+            return None
 
     def get_antonyms_json(self, word):
 
-        request = requests.get(self.api_anton + str(word))
-
-        return request.json() if request.status_code == 200 else None
+        try:
+            with requests.get(self.api_anton.format(word)) as request:
+                return request.json()
+        except:
+            return None
 
     def get_inverse_gender_word(self, json_word, masculine = True):
 
@@ -297,7 +300,7 @@ class DicioAPI(object):
         elif 'masculinos' in json_word:
             return json_word['masculinos'] if not masculine else json_word['palavra']
         else:
-            return json_word['palavra']
+            return None
 
     def get_masculine_word(self, json_word):
         return self.get_inverse_gender_word(json_word, False)
@@ -305,9 +308,3 @@ class DicioAPI(object):
     def get_feminine_word(self, json_word) :
         return self.get_inverse_gender_word(json_word, True)
 
-    def get_plural_word(self, json_word):
-
-        if 'plurais' in json_word:
-            return json_word['plurais']
-        else:
-            return None
