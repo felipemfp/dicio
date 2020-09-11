@@ -186,7 +186,6 @@ class DicioAPI(object):
         self.api_synon = 'https://www.sinonimos.com.br/api/?method=getSinonimos&palavra={}'
         self.api_anton = 'https://www.antonimos.com.br/api/?method=getAntonimos&palavra={}'
 
-
     def search(self, word):
 
         try:
@@ -200,8 +199,7 @@ class DicioAPI(object):
                     print('No word found. {}'.format(suggestions_text))
                     return None
                 else:
-                    valid_word = self.validate_word(request.json())
-                    return self.format_word(valid_word)
+                    return self.format_word(request.json())
         except:
             return None
 
@@ -214,8 +212,8 @@ class DicioAPI(object):
             meaning=meaning,
             synonyms=self.get_synonyms(json_word),
             antonyms=self.get_antonyms(json_word),
-            masculine=self.get_masculine_word(json_word),
-            feminine=self.get_feminine_word(json_word),
+            masculine=self.get_masculine(json_word),
+            feminine=self.get_feminine(json_word),
             singular=self.get_singular(json_word),
             plural=self.get_plural(json_word),
             examples=self.get_examples(json_word),
@@ -277,34 +275,9 @@ class DicioAPI(object):
     def get_plural(self, json_word):
         return json_word['plurais'].split(';') if 'plurais' in json_word else None
 
-    def get_synonyms_json(self, word):
+    def get_masculine(self, json_word):
+        return json_word['masculinos'].split(';') if 'masculinos' in json_word else None
 
-        try:
-            with requests.get(self.api_synon.format(word)) as request:
-                return request.json()
-        except:
-            return None
-
-    def get_antonyms_json(self, word):
-
-        try:
-            with requests.get(self.api_anton.format(word)) as request:
-                return request.json()
-        except:
-            return None
-
-    def get_inverse_gender_word(self, json_word, masculine = True):
-
-        if 'femininos' in json_word:
-            return json_word['femininos'] if masculine else json_word['palavra']
-        elif 'masculinos' in json_word:
-            return json_word['masculinos'] if not masculine else json_word['palavra']
-        else:
-            return None
-
-    def get_masculine_word(self, json_word):
-        return self.get_inverse_gender_word(json_word, False)
-
-    def get_feminine_word(self, json_word) :
-        return self.get_inverse_gender_word(json_word, True)
+    def get_feminine(self, json_word) :
+        return json_word['femininos'].split(';') if 'femininos' in json_word else None
 
