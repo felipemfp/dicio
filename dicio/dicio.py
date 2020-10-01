@@ -90,7 +90,7 @@ class Dicio(object):
 
     def scrape_meaning(self, page):
         """
-        Return meaning and etymology.
+        Return list containing meanings and etymology.
         """
         html = Utils.text_between(page, *TAG_MEANING, force_html=True)
 
@@ -100,9 +100,9 @@ class Dicio(object):
         meanings = Utils.split_html_tag(html, 'br')
         meanings = [Utils.remove_spaces(Utils.remove_tags(x))
                     for x in meanings]
-        meaning = '; '.join([x for x in meanings if x != etymology])
+        meaning_list = [x for x in meanings if x != etymology]
 
-        return meaning, etymology
+        return meaning_list, etymology
 
     def scrape_synonyms(self, page):
         """
